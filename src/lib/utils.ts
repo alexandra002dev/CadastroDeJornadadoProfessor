@@ -49,7 +49,7 @@ export function gerarDatasAula(
   while (dataAtual <= dataFim) {
     const diaSemana = dataAtual.getDay();
     const diaString = Object.entries(mapaDias).find(
-      ([_, value]) => value === diaSemana
+      ([, value]) => value === diaSemana
     )?.[0];
 
     if (diaString && diasSelecionados.includes(diaString)) {
