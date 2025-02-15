@@ -19,7 +19,7 @@ const ConfgPage = () => {
     if (savedFeriados) {
       // Converte as strings de data de volta para objetos Date
       const parsedFeriados = JSON.parse(savedFeriados);
-      return parsedFeriados.map((f: any) => ({
+      return parsedFeriados.map((f: { data: string; nome: string }) => ({
         ...f,
         data: new Date(f.data),
       }));

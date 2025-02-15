@@ -22,6 +22,10 @@ import { Printer } from "lucide-react"; // Adicione este import
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Link from "next/link";
+interface Feriado {
+  data: Date;
+  nome: string;
+}
 const diasSemana = [
   { id: "segunda", label: "Segunda-feira" },
   { id: "terca", label: "Terça-feira" },
@@ -84,7 +88,7 @@ const getFeriados = () => {
   const savedFeriados = localStorage.getItem("feriados-2025");
   if (savedFeriados) {
     const parsedFeriados = JSON.parse(savedFeriados);
-    return parsedFeriados.map((f: any) => ({
+    return parsedFeriados.map((f: Feriado) => ({
       data: new Date(f.data),
       nome: f.nome,
     }));
@@ -97,14 +101,7 @@ export function CadastroJornadaForm() {
   }>({});
   const [datasAula, setDatasAula] = useState<Date[]>([]);
   const [programacao, setProgramacao] = useState<string[]>([]);
-  const [dadosGerados, setDadosGerados] = useState<{
-    professor: string;
-    turma: string;
-    trimestre: number;
-    ano: number;
-    programacao: string[];
-    datas: Date[];
-  } | null>(null);
+
   const form = useForm({
     resolver: zodResolver(jornadaSchema),
     defaultValues: {
@@ -147,8 +144,13 @@ export function CadastroJornadaForm() {
       [diaId]: parseInt(tempos),
     }));
   };
-
-  const onSubmit = (data: any) => {
+  interface FormData {
+    professor: string;
+    turma: string;
+    trimestre: number;
+    ano: number;
+  }
+  const onSubmit = (data: FormData) => {
     // Validação dos dias selecionados
     if (Object.keys(diasSelecionados).length === 0) {
       alert("Selecione pelo menos um dia da semana");
@@ -174,15 +176,6 @@ export function CadastroJornadaForm() {
     });
 
     setProgramacao(programacaoGerada);
-
-    setDadosGerados({
-      professor: data.professor,
-      turma: data.turma,
-      trimestre: data.trimestre,
-      ano: data.ano,
-      programacao: programacaoGerada,
-      datas: datas,
-    });
   };
 
   return (
@@ -346,7 +339,7 @@ export function CadastroJornadaForm() {
                   const diaSemana = getDiaSemana(data);
                   const tempos = diasSelecionados[diaSemana];
                   const feriado = feriados.find(
-                    (f) =>
+                    (f: Feriado) =>
                       f.data.getDate() === data.getDate() &&
                       f.data.getMonth() === data.getMonth()
                   );
